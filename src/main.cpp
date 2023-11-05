@@ -2,16 +2,16 @@
 
 #include <ArduinoBLE.h>
 #include <LowPower.h>
+#include <SPI.h>
+#include <Wire.h>
 
-//#define SDCARD
+#define SDCARD
 
 #ifdef SDCARD
   #include <SD.h>
 
-  File dataFile;
-
   void saveToCSV(const String deviceType, const String deviceName, const String deviceAddress) {
-    dataFile = SD.open("scanned_devices.csv", FILE_WRITE);
+    File dataFile = SD.open("scanned_devices.csv", FILE_WRITE);
 
     if (dataFile) {
       dataFile.print(deviceType);
@@ -29,16 +29,24 @@
 void setup() {
   Serial.begin(9600);
 
-  Serial.println("Starting BLE...");
-  if (!BLE.begin()) {Serial.println("Starting BLE failed!"); while (1);}
+  delay(3000);
+
+  Serial.print("Starting BLE...");
+  if (!BLE.begin()) {Serial.println(" failed!\n"); while (1);}
+  else{Serial.println(" success!\n");}
+
+  delay(500);
 
   #ifdef SDCARD
-    Serial.println("Initializing SD card...");
-    if (!SD.begin(4)) {Serial.println("SD card initialization failed!"); while (1);}
+    Serial.print("Initializing SD card...");
+    if (!SD.begin(4)) {Serial.println(" failed!\n"); while (1);}
+    else{Serial.println(" success!\n");}
 
-    dataFile = SD.open("scanned_devices.csv", FILE_WRITE);
-    if (dataFile) {dataFile.println("Type,Name,Address"); dataFile.close();}
-    else {Serial.println("Error opening data file");}
+    delay(500);
+
+    /*File file = SD.open("scanned_devices.csv", FILE_WRITE);
+    if (file) {file.println("Type,Name,Address"); file.close();}
+    else {Serial.println("Error opening data file");}*/
   #endif
   Serial.println("Scanning for devices...");
 }
