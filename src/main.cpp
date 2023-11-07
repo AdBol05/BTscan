@@ -65,7 +65,7 @@ void loop() {
     Serial.println();
 
     #ifdef SDCARD
-      saveToCSV("peripheral", peripheral.localName(), peripheral.address());
+      saveToCSV("p", peripheral.localName(), peripheral.address());
     #endif
   }
 
@@ -78,7 +78,7 @@ void loop() {
     Serial.println();
 
     #ifdef SDCARD
-      saveToCSV("central", central.localName(), central.address());
+      saveToCSV("c", central.localName(), central.address());
     #endif
   }
 
