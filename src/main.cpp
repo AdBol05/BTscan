@@ -14,12 +14,14 @@
     File dataFile = SD.open("scanned_devices.csv", FILE_WRITE);
 
     if (dataFile) {
-      dataFile.print(deviceType);
-      dataFile.print(",");
-      dataFile.print(deviceName);
-      dataFile.print(",");
-      dataFile.println(deviceAddress);
-      dataFile.close();
+      if(deviceAddress != "79:c9:16:41:85:98" && deviceAddress != "98:06:3c:ee:2d:71"){
+        dataFile.print(deviceType);
+        dataFile.print(",");
+        dataFile.print(deviceName);
+        dataFile.print(",");
+        dataFile.println(deviceAddress);
+        dataFile.close();
+      }
       Serial.println("Written to CSV file");
     }
     else {Serial.println("Error opening data file");}
