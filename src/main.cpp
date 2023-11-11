@@ -6,31 +6,33 @@
 #include <Wire.h>
 
 #define SDCARD
+#define LED 2
 
 #ifdef SDCARD
   #include <SD.h>
 
   void saveToCSV(const String deviceType, const String deviceName, const String deviceAddress) {
-    File dataFile = SD.open("scanned_devices.csv", FILE_WRITE);
+    digitalWrite(LED, HIGH);
+    File dataFile = SD.open("devices.csv", FILE_WRITE);
 
-    if (dataFile) {
-      if(deviceAddress != "79:c9:16:41:85:98" && deviceAddress != "98:06:3c:ee:2d:71"){
-        dataFile.print(deviceType);
-        dataFile.print(",");
-        dataFile.print(deviceName);
-        dataFile.print(",");
-        dataFile.println(deviceAddress);
-        dataFile.close();
-      }
-      Serial.println("Written to CSV file");
+    if(deviceAddress != "79:c9:16:41:85:98" && deviceAddress != "98:06:3c:ee:2d:71"){
+      dataFile.print(deviceType);
+      dataFile.print(",");
+      dataFile.print(deviceName);
+      dataFile.print(",");
+      dataFile.println(deviceAddress);
+      dataFile.close();
     }
-    else {Serial.println("Error opening data file");}
+    Serial.println("Written to CSV file");
+    digitalWrite(LED, LOW);
   }
 #endif
 
 void setup() {
   Serial.begin(9600);
 
+  pinMode(LED, OUTPUT);
+  digitalWrite(LED, HIGH);
   delay(3000);
 
   Serial.print("Starting BLE...");
@@ -50,6 +52,8 @@ void setup() {
     if (file) {file.println("Type,Name,Address"); file.close();}
     else {Serial.println("Error opening data file");}*/
   #endif
+
+  digitalWrite(LED, LOW);
   Serial.println("Scanning for devices...");
 }
 
