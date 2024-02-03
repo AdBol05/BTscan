@@ -1,12 +1,16 @@
 #include <Arduino.h>
 
 #include <ArduinoBLE.h>
-#include <LowPower.h>
 #include <SPI.h>
 #include <Wire.h>
 
 #define SDCARD
 #define LED 2
+//#define SLEEP
+
+#ifdef SLEEP
+  #include <LowPower.h>
+#endif
 
 #ifdef SDCARD
   #include <SD.h>
@@ -15,14 +19,13 @@
     digitalWrite(LED, HIGH);
     File dataFile = SD.open("devices.csv", FILE_WRITE);
 
-    if(deviceAddress != "79:c9:16:41:85:98" && deviceAddress != "98:06:3c:ee:2d:71"){
-      dataFile.print(deviceType);
-      dataFile.print(",");
-      dataFile.print(deviceName);
-      dataFile.print(",");
-      dataFile.println(deviceAddress);
-      dataFile.close();
-    }
+    dataFile.print(deviceType);
+    dataFile.print(",");
+    dataFile.print(deviceName);
+    dataFile.print(",");
+    dataFile.println(deviceAddress);
+    dataFile.close();
+
     Serial.println("Written to CSV file");
     digitalWrite(LED, LOW);
   }
@@ -43,14 +46,10 @@ void setup() {
 
   #ifdef SDCARD
     Serial.print("Initializing SD card...");
-    if (!SD.begin(4)) {Serial.println(" failed!\n"); while (1);}
+    if (!SD.begin(4)) {Serial.println(" failed!\nhalting"); while (1);}
     else{Serial.println(" success!\n");}
 
     delay(500);
-
-    /*File file = SD.open("scanned_devices.csv", FILE_WRITE);
-    if (file) {file.println("Type,Name,Address"); file.close();}
-    else {Serial.println("Error opening data file");}*/
   #endif
 
   digitalWrite(LED, LOW);
@@ -88,6 +87,10 @@ void loop() {
     #endif
   }
 
-  delay(1000);
-  //LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
+  #ifdef SLEEP
+    delay(100);
+    LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
+  #else
+    delay(1000);
+  #endif
 }
